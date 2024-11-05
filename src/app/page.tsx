@@ -26,7 +26,7 @@ export default function Home() {
           onClick={() => {
             router.push("/home")
           }}>
-          今すぐ始めるよ
+          今すぐ始める
         </Button>
       </div>
     </>
