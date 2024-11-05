@@ -15,7 +15,7 @@ export default function Home() {
           <Typography variant="h3" component="h3">
             Welcome To
           </Typography>
-          <Image style={{ marginLeft: 10, width:"auto", height:"100px" }} src="/Title.png" alt="logo" width="300" height="100"/>
+          <Image style={{width:"auto", height:"100px" }} src="/Title.png" alt="logo" width="300" height="100"/>
 
 
         </div>
