@@ -1,7 +1,8 @@
 "use client";
 import Split from "react-split"
-import Header from "./header"
+import Header from "./Header"
 import Sidebar from "./Sidebar"
+import PostList from "./PostList";
 
 export default function Home() {
     return (
@@ -18,7 +19,7 @@ export default function Home() {
                     <Sidebar />
                 </div>
                 <div className="mt-6 ms-3">
-                    sample
+                    <PostList />
                 </div>
             </Split>
         </>

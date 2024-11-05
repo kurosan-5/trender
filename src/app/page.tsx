@@ -9,7 +9,7 @@ export default function Home() {
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "100vh" }}>
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "100vh", width:"100vw" }}>
 
         <div className="d-flex">
           <Typography variant="h3" component="h3">
