@@ -30,6 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -39,9 +40,8 @@ export default function RootLayout({
             <AlertProvider>
               <ResponsiveAppBar />
               <ShowAlert />
-              <main style={{paddingTop:60}}>
-              {children}
-                
+              <main style={{ paddingTop: 74}}>
+                {children}
               </main>
             </AlertProvider>
           </ThemeProvider>

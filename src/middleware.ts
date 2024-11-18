@@ -11,11 +11,8 @@ export function middleware(request: NextRequest) {
 
     if (!user && url.pathname !== '/auth/signin' && url.pathname !== '/auth/signup'&& url.pathname !== '/auth') {
         // ログインしていない場合は/auth/signinにリダイレクト
-        console.log(user)
         return NextResponse.redirect(new URL('/auth', request.url));
     }
-
-
 
     if (user && url.pathname.startsWith('/auth')) {
         // ログイン済みの場合はホームにリダイレクト
@@ -26,7 +23,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
 }
 
-// 適用対象のルート(全て)
+// 適用対象のルート
 export const config = {
     matcher: ['/','/home', '/auth/:path*'],
 };

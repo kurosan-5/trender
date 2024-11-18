@@ -23,7 +23,8 @@ const PopupGoogleSigninButton = () => {
             <Image
                 src="/google.png" 
                 alt="Google"
-                style={{ width: "24px", height: "24px" }}
+                width={24}
+                height={24}
             />
         }
             sx={{ borderRadius: 15, color: "blue" }}

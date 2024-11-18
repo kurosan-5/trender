@@ -11,7 +11,7 @@ const AuthSelect = () => {
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="center"
-                sx={{ height: '100vh', gap: 2 }}
+                sx={{ height: '85vh', gap: 2 }}
             >
                 <Typography variant="h3"sx={{marginBottom:5, padding:5, textAlign:"center"}} component="h3">TRENDERを始めよう</Typography>
 
