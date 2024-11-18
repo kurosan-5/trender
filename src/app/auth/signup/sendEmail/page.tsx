@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "../../../../../firebase";
 import { useEffect, useState } from "react";
 import { Typography, Button, Box } from '@mui/material';
+import { useAlert } from "@/context/AlertContext";
 
 
 const SendEmail = () => {
@@ -22,7 +23,8 @@ const SendEmail = () => {
         sendEmail();
     }, [])
 
-
+    const { showAlert } = useAlert()
+    
     useEffect(() => {
 
         const intervalId = setInterval(() => {
@@ -31,6 +33,8 @@ const SendEmail = () => {
                     if (auth.currentUser!.emailVerified) {
                         clearInterval(intervalId); // ポーリング停止
                         router.push("/home"); // Home 画面に移動
+                        showAlert("TRENDERへようこそ！", "welcome");
+
 
                     }
                 }).catch(error => console.error("Failed to reload user:", error));

@@ -24,7 +24,7 @@ export default function Home() {
           variant="contained"
           sx={{ marginTop: 5, backgroundColor: "black" }}
           onClick={() => {
-            router.push("/home")
+            router.push("/auth")
           }}>
           今すぐ始める
         </Button>

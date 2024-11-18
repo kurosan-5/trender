@@ -1,26 +1,25 @@
 'use client'
 import { createUserWithEmailAndPassword} from "firebase/auth";
-import { auth } from "../../firebase";
 import { useRouter } from "next/navigation";
 import { SetState } from "@/globalType";
 import React from "react";
 import { Button } from "@mui/material";
-
-interface SignInError {
+import { auth } from "../../../firebase";
+interface SignUpError {
     email?:string,
     password?:string,
     other?:string,
 }
 
-interface SignInButtonProps {
+interface SignUpButtonProps {
     email:string,
     password:string,
-    setError:SetState<SignInError>
+    setError:SetState<SignUpError>
 }
 
-const SignUpButton : React.FC<SignInButtonProps> = ({email, password, setError}) => {
+const SignUpButton : React.FC<SignUpButtonProps> = ({email, password, setError}) => {
     const router = useRouter();
-    const handleSignInButton = () => {
+    const handleSignUpButton = () => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
                 router.push('/auth/signup/sendEmail');
@@ -48,7 +47,7 @@ const SignUpButton : React.FC<SignInButtonProps> = ({email, password, setError})
     }
 
     return (
-        <Button variant="contained" onClick={handleSignInButton}>メールアドレスで続行</Button>
+        <Button variant="contained" onClick={handleSignUpButton}>メールアドレスで続行</Button>
     )
 
 }

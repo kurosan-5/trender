@@ -1,44 +1,23 @@
 'use client'
 import { useState } from 'react';
-import { auth } from '../../../../firebase'
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from "next/navigation";
 
 import { Button, TextField, Typography, Box } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import SignInButton from '@/components/Buttons/SignInButton';
 
 interface Error {
-    email?:string
-    password?:string
-    other?:string
+    email?: string
+    password?: string
+    other?: string
 }
 
-
 const SignIn = () => {
-
-    const router = useRouter();
+    const router = useRouter()
     const [emailText, onChangeEmailText] = useState('');
     const [passwordText, onChangePasswordText] = useState('');
 
-    const [error, setError] = useState<Error>()
-
-    const pressLoginButton = () => {
-        signInWithEmailAndPassword(auth, emailText, passwordText)
-            .then(() => {
-                router.push('/home');
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                if (errorCode === 'auth/invalid-email') {
-                    setError({ "email": 'メールアドレスの形式が違います' });
-                } else if (errorCode === 'auth/invalid-credential') {
-                    setError({ "password": 'パスワードが間違っています' });
-                } else if (errorCode === "auth/missing-password") {
-                    setError({ "password": 'パスワードを入力してください' });
-                } else {
-                    setError({ "other": 'エラーが発生しました。再度お試しください' });
-                }
-            })
-    }
+    const [error, setError] = useState<Error>({})
+    
 
     return (
         <Box
@@ -64,7 +43,7 @@ const SignIn = () => {
                 value={emailText}
                 onChange={(e) => onChangeEmailText(e.target.value)}
                 placeholder="Input email"
-                sx={{ mb: 2, width: 250, mt:1 }}
+                sx={{ mb: 2, width: 250, mt: 1 }}
                 helperText={error?.email}
                 error={error?.email != undefined}
             />
@@ -82,53 +61,22 @@ const SignIn = () => {
             />
 
 
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={pressLoginButton}
-                sx={{ mb: 2, width: 200 }}
-            >
-                SignIn
-            </Button>
-
-            <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => {
-                    onChangeEmailText('kurowassan55555@gmail.com');
-                    onChangePasswordText('secret');
-                }}
-                sx={{ mb: 2, width: 200 }}
-            >
-                Default SignIn (me)
-            </Button>
-
-            <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => {
-                    onChangeEmailText('job@job.job');
-                    onChangePasswordText('secret');
-                }}
-                sx={{ mb: 2, width: 200 }}
-            >
-                Default SignIn (job)
-            </Button>
+            <SignInButton email={emailText} password={passwordText} setError={setError}/>
 
             <Button
                 variant="text"
                 onClick={() => router.push('/resetPassword')}
                 sx={{ mb: 1 }}
             >
-                Reset Password
+                パスワードをリセットする
             </Button>
 
             <Button
                 variant="text"
-                onClick={() => router.push('/home')}
+                onClick={() => router.push('/auth')}
                 sx={{ mb: 1 }}
             >
-                Go to Home
+                戻る
             </Button>
         </Box>
     );

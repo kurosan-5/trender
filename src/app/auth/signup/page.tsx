@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Typography, Box } from '@mui/material';
 import { useRouter } from "next/navigation";
 
-import SignUpButton from '@/components/SignUpButton';
+import SignUpButton from '@/components/Buttons/SignUpButton';
 
 export default function SignUpPage() {
   const [emailText, setEmailText] = useState('');
@@ -52,48 +52,17 @@ export default function SignUpPage() {
         error={error?.password !== undefined}
         helperText={error?.password}
         sx={{width:250}}
-
-        
       />
 
       <SignUpButton email={emailText} password={passwordText} setError={setError}/>
 
       <Button
-        variant="outlined"
-        onClick={() => {
-          const S = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-          const N = 16;
-          const randomString = Array.from(Array(N))
-            .map(() => S[Math.floor(Math.random() * S.length)])
-            .join('') + '@test.test';
-          onChangeEmailText(randomString);
-          onChangePasswordText('secret');
-        }}
-        sx={{width:200}}
-      >
-        default SignUp
-      </Button>
-
-      {/* デフォルトサインアップ (me) */}
-      <Button
-        variant="outlined"
-        onClick={() => {
-          onChangeEmailText('kurowassan55555@gmail.com');
-          onChangePasswordText('secret');
-        }}
-        sx={{width:200}}
-
-      >
-        default SignUp (me)
-      </Button>
-
-      <Button
         variant="text"
-        onClick={() => router.push('/home')}
+        onClick={() => router.push('/auth')}
         sx={{width:160}}
 
       >
-        トップページに戻る
+        戻る
       </Button>
     </Box>
   );
