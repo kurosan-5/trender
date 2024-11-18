@@ -1,25 +1,24 @@
 'use client'
 import { useAlert } from "@/context/AlertContext";
 import { Snackbar, Alert } from "@mui/material";
-import WavingHandIcon from '@mui/icons-material/WavingHand';
-
+import WavingHandTwoToneIcon from '@mui/icons-material/WavingHandTwoTone';
 const ShowAlert = () => {
   const { message, type, clearAlert } = useAlert();
 
   return message ? (
-    <Snackbar open={true} autoHideDuration={3000} onClose={clearAlert} anchorOrigin={{ vertical: "top", horizontal: "center" }} sx={{ width: "100%", marginTop: 5 }}>
+    <Snackbar open={true} autoHideDuration={3000} onClose={clearAlert} anchorOrigin={{ vertical: "top", horizontal: "center" }} sx={{ width: "100%", marginTop: 7 }}>
       {type === "welcome" ? (
 
         <Alert
-          icon={<WavingHandIcon sx={{ color: "white" }} />}
+          icon={<WavingHandTwoToneIcon sx={{ color: "black" }} />}
           severity='success'
           onClose={clearAlert}
           sx={{
-            width: "60%",
-            fontSize: 20,
-            color: "#523701",
-            backgroundColor: "#ff8c40"
+            fontSize: 14,
+            color: "black",
+            backgroundColor: "rgba(255, 214, 255,0.8)"
           }}
+          action=''
         >
           {message}
         </Alert>
@@ -28,9 +27,8 @@ const ShowAlert = () => {
         <Alert
           severity={type}
           onClose={clearAlert}
-          sx={{
-            width: "60%",
-          }}
+          icon={<></>}
+          action=''
         >
           {message}
         </Alert>

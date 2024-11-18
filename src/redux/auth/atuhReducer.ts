@@ -1,4 +1,4 @@
-import { User } from "firebase/auth"
+import { myUser } from "./authType"
 
 const initialState = {
     user:null
@@ -6,7 +6,7 @@ const initialState = {
 
 type Action = {
     type:"SETUSER"|"RESETUSER"
-    payload:User,
+    payload:myUser,
 }
 
 const authReducer = (state=initialState, action:Action) => {

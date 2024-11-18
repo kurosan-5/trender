@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Header from "./home/Header";
 import { AlertProvider } from "@/context/AlertContext";
 import ShowAlert from "@/components/ShowAlert";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
-import store from "@/redux/store";
 import StoreProvider from "@/redux/StoreProvider";
+import ResponsiveAppBar from "@/components/AppBar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,9 +37,12 @@ export default function RootLayout({
         <StoreProvider>
           <ThemeProvider theme={theme}>
             <AlertProvider>
-              <Header />
+              <ResponsiveAppBar />
               <ShowAlert />
+              <main style={{paddingTop:60}}>
               {children}
+                
+              </main>
             </AlertProvider>
           </ThemeProvider>
         </StoreProvider>

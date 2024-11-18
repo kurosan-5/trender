@@ -17,13 +17,13 @@ const AuthSelect = () => {
 
                 <PopupGoogleSigninButton />
                 <Link href="/auth/signin">
-                    <Button variant="contained">
-                        メールアドレスでサインイン
+                    <Button variant="contained" sx={{width:200}}>
+                        サインイン
                     </Button>
                 </Link>
                 <Link href="/auth/signup">
-                    <Button variant="contained">
-                        メールアドレスで新規登録
+                    <Button variant="contained" sx={{width:200}}>
+                        新規登録
                     </Button>
                 </Link>
             </Box>

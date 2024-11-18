@@ -4,21 +4,18 @@ import Link from "next/link"
 import { useState } from "react";
 import { auth } from "../../../firebase";
 import { Button, Box, Grid2 } from "@mui/material";
-import { useAuthActions } from "@/redux/auth/useActions";
-import { User } from "firebase/auth";
 import { useSelector } from "react-redux";
+import { myUser, reducerUser } from "@/redux/auth/authType";
+import { mediaQuery, useMediaQuery } from "@/useMediaQuery";
 export default function Header() {
 
-    const user = useSelector((state: { auth:{ user: User|null }}) => {
-        console.log(state.auth.user)
-        return state.auth.user
-    })
+    const user = useSelector((state: reducerUser) => state.auth.user)
 
-    const AuthButtons = !user?.uid ? (
+    const AuthButtons = !user?.id ? (
         <Grid2
             display="flex"
             flexDirection="row"
-            sx={{ marginLeft: "auto", height: '100vh', gap: 2, marginRight: 3, marginTop: 1 }}
+            sx={{ marginLeft: "auto", height: '50', gap: 2, marginRight: 3, marginTop: 1 }}
         >
             <Link href="/auth/signup">
                 <Button variant="outlined" color="success" sx={{ width: 150 }}>
@@ -36,12 +33,12 @@ export default function Header() {
     );
 
     return (
-        <nav className="p-0 navbar navbar-expand-lg header shadow bg-white" style={{ height: 50 }}>
+        <nav className="p-0 navbar navbar-expand-lg header shadow bg-white" style={{ height: 50, }}>
             <Grid2
                 container
                 display="flex"
                 flexDirection="row"
-                sx={{ height: 50, width: "100vw", gap: 2 }}
+                sx={{ width: "100vw", gap: 2 }}
             >
                 <Link href="/home" style={{ minWidth: 200 }}><img style={{ marginLeft: 5 }} src="/Title.png" alt="TRENDER" width="200" height="28" />
                 </Link>

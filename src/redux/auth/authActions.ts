@@ -1,6 +1,7 @@
-import { User } from "firebase/auth"
+import { myUser } from "./authType"
 
-export const setUser = (value:User) => {
+
+export const setUser = (value:myUser) => {
     return {
         type: "SETUSER",
         payload: value

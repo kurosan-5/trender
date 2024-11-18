@@ -1,11 +1,11 @@
 {
     "posts": [
         {
-            "title": "title1",
+            "title": "post1",
             "content": "content1"
         },
         {
-            "title": "title2",
+            "title": "post2",
             "content": "content2"
         }
     ]

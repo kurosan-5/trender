@@ -4,6 +4,7 @@ import { getAuth, GoogleAuthProvider, onAuthStateChanged, User } from "firebase/
 import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+import Cookies from 'js-cookie';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,6 +20,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const googleProvider = new GoogleAuthProvider();
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    // ユーザーがログインしている場合、IDトークンを取得
+    const idToken = await user.getIdToken();
+    // ログインした場合、auth_tokenをクッキーに保存
+    Cookies.set('auth_token', idToken, { expires: 7, path: '/' });
+  } else {
+    // ログアウトした場合、auth_tokenをクッキーから削除
+    Cookies.remove('auth_token', { path: '/' });
+  }
+});
+
 
 const db = getFirestore(app);
 
