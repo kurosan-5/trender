@@ -25,5 +25,5 @@ export function middleware(request: NextRequest) {
 
 // 適用対象のルート
 export const config = {
-    matcher: ['/','/home', '/auth/:path*'],
+    matcher: ['/','/home', '/auth/signin','/auth/signup'],
 };
