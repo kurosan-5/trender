@@ -116,7 +116,6 @@ function ResponsiveAppBar() {
         <AppBar position="fixed">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-
                     <TrendingUpIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }} />
                     <Typography
                         variant="h6"
