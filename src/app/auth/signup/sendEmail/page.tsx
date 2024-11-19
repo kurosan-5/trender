@@ -17,14 +17,13 @@ const SendEmail = () => {
                     .catch((error) => {
                         console.error(error);
                     })
-
             }
         }
         sendEmail();
     }, [])
 
     const { showAlert } = useAlert()
-    
+
     useEffect(() => {
 
         const intervalId = setInterval(() => {
@@ -34,8 +33,6 @@ const SendEmail = () => {
                         clearInterval(intervalId); // ポーリング停止
                         router.push("/home"); // Home 画面に移動
                         showAlert("TRENDERへようこそ！", "welcome");
-
-
                     }
                 }).catch(error => console.error("Failed to reload user:", error));
             }
@@ -71,14 +68,6 @@ const SendEmail = () => {
             </Typography>
 
             <ResendEmailButton />
-
-            <Button
-                variant="text"
-                onClick={() => router.push('/home')}
-                sx={{ marginTop: 4 }}
-            >
-                トップページに戻る
-            </Button>
         </Box>
     )
 }
