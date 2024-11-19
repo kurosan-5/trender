@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB6q3GbYxVmQMfNQ0f5vw0k3PatoFKhhKE",
-  authDomain: "trender-one.vercel.app",
+  authDomain: "trender-5332b.firebaseapp.com",
   projectId: "trender-5332b",
   storageBucket: "trender-5332b.firebasestorage.app",
   messagingSenderId: "448960989934",
