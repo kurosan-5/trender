@@ -2,7 +2,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { useAuthActions } from "@/redux/auth/useActions";
-import DashboardLayoutBasic from "@/components/DashBoard";
 
 export default function Home() {
     const {setUser, resetUser} = useAuthActions()
@@ -22,7 +21,6 @@ export default function Home() {
 
     return (
         <>
-            <DashboardLayoutBasic />
         </>
     )
 }

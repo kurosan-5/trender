@@ -19,6 +19,9 @@ import { signOut } from 'firebase/auth';
 import { useAlert } from '@/context/AlertContext';
 import { useSelector } from 'react-redux';
 import { reducerUser } from '@/redux/auth/authType';
+import { List, ListItem, ListItemButton, ListItemText, Divider, Drawer, styled } from '@mui/material';
+import { useState } from 'react';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 interface Roots {
     name: string;
@@ -64,13 +67,47 @@ const SignInSettings = [
     },
 ];
 
+const list = (toggleDrawer: (value: boolean) => void) => (
+    <Box
+        sx={{ width: 250 }}
+        role="presentation"
+        onClick={() => toggleDrawer(false)}
+        onKeyDown={() => toggleDrawer(false)}
+    >
+        <List>
+            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                <ListItem key={text} disablePadding>
+                    <ListItemButton>
+                        <ListItemText primary={text} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+        <Divider />
+        <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                <ListItem key={text} disablePadding>
+                    <ListItemButton>
+                        <ListItemText primary={text} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+    </Box>
+);
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+}));
 
 
 function ResponsiveAppBar() {
-
-
-
-    const user = useSelector((state : reducerUser) => state.auth.user);
+    const [open, toggleDrawer] = useState(false)
+    const user = useSelector((state: reducerUser) => state.auth.user);
     //userが認証していたらTrue
     if (user) {
         pages = SignInPages;
@@ -116,67 +153,28 @@ function ResponsiveAppBar() {
         <AppBar position="fixed">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <TrendingUpIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="#app-bar-with-responsive-menu"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        TRENDER
-                    </Typography>
-                    {!user ? null : <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                    {!user ? null : <Box sx={{ flexGrow: 1, display: 'flex' }}>
                         <IconButton
                             size="large"
                             aria-label="account of current user"
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
+                            onClick={() => toggleDrawer(true)}
                             color="inherit"
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={() => handleCloseNavMenu(null)}
-                            sx={{ display: { xs: 'block', md: 'none' } }}
-                        >
-                            {pages && pages.map((page) => (
-                                <MenuItem key={page.name} onClick={() => handleCloseNavMenu(page.root)}>
-                                    <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
                     </Box>}
-                    <TrendingUpIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 2 }} />
+                    
+                    <TrendingUpIcon sx={{ display: 'flex', mr: 2 }} />
                     <Typography
                         variant="h5"
                         noWrap
                         component="a"
-                        href="#app-bar-with-responsive-menu"
+                        href="/home"
                         sx={{
                             mr: 2,
-                            display: { xs: 'flex', md: 'none' },
+                            display: 'flex',
                             flexGrow: 1,
                             fontFamily: 'monospace',
                             fontWeight: 700,
@@ -187,18 +185,8 @@ function ResponsiveAppBar() {
                     >
                         TRENDER
                     </Typography>
-                    {!user ? null : <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages && pages.map((page) => (
-                            <Button
-                                key={page.name}
-                                onClick={() => handleCloseNavMenu(page.root)}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                {page.name}
-                            </Button>
-                        ))}
-                    </Box>}
-                    {!user ? null : <Box sx={{ flexGrow: 0 }}>
+                    {!user ? null : 
+                    <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
@@ -228,6 +216,18 @@ function ResponsiveAppBar() {
                         </Menu>
                     </Box>}
                 </Toolbar>
+                <Drawer
+                    open={open}
+                    onClose={() => toggleDrawer(false)}
+                >
+                    <DrawerHeader>
+                        <IconButton>
+                            <ChevronLeftIcon onClick={() => toggleDrawer(false)}/>
+                        </IconButton>
+                    </DrawerHeader>
+                    <Divider />
+                    {list(toggleDrawer)}
+                </Drawer>
             </Container>
         </AppBar>
     );
