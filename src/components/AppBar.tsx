@@ -29,22 +29,6 @@ interface Roots {
 
 let settings: Roots[] | null = null;
 
-const SignInPages = [
-    {
-        name: "Products",
-        root: "/profile"
-    },
-    {
-        name: "Pricing",
-        root: "/account"
-    },
-    {
-        name: "Blog",
-        root: "/dashboard"
-    },
-
-];
-
 
 const SignInSettings = [
     {
@@ -73,7 +57,7 @@ const list = (toggleDrawer: (value: boolean) => void) => (
         onKeyDown={() => toggleDrawer(false)}
     >
         <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text) => (
                 <ListItem key={text} disablePadding>
                     <ListItemButton>
                         <ListItemText primary={text} />
