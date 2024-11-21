@@ -2,6 +2,11 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { useAuthActions } from "@/redux/auth/useActions";
+import { Button } from "@mui/material";
+import PostButton from "@/components/Buttons/PostButton";
+import ShowPostButton from "@/components/ShowButtons/ShowPostButton";
+import ShowPostIndex from "@/components/Indexs/ShowPostIndex";
+import RecipeReviewCard from "@/components/Cards/PostCard";
 
 export default function Home() {
     const {setUser, resetUser} = useAuthActions()
@@ -21,6 +26,9 @@ export default function Home() {
 
     return (
         <>
+        <RecipeReviewCard />
+        <ShowPostIndex />
+          <ShowPostButton />
         </>
     )
 }
