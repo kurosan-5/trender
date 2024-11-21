@@ -9,7 +9,6 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
@@ -28,7 +27,6 @@ interface Roots {
     root: string
 }
 
-let pages: Roots[] | null = null;
 let settings: Roots[] | null = null;
 
 const SignInPages = [
@@ -85,7 +83,7 @@ const list = (toggleDrawer: (value: boolean) => void) => (
         </List>
         <Divider />
         <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+            {['All mail', 'Trash', 'Spam'].map((text) => (
                 <ListItem key={text} disablePadding>
                     <ListItemButton>
                         <ListItemText primary={text} />
@@ -110,26 +108,15 @@ function ResponsiveAppBar() {
     const user = useSelector((state: reducerUser) => state.auth.user);
     //userが認証していたらTrue
     if (user) {
-        pages = SignInPages;
         settings = SignInSettings;
     }
     const router = useRouter();
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElNav(event.currentTarget);
-    };
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = (root: string | null) => {
-        setAnchorElNav(null);
-        if (root) {
-            router.push(root)
-        }
-    };
     const { showAlert } = useAlert()
     const handleCloseUserMenu = (root: string | null) => {
         setAnchorElUser(null);
