@@ -11,7 +11,7 @@ const SignOutButton = () => {
     signOut(auth)
       .then(() => {
         showAlert("ログアウトしました", "success");
-        router.push("/auth")
+        router.push("/")
       })
       .catch((error) => {
         console.error(error);

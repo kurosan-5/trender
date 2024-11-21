@@ -57,11 +57,11 @@ const NAVIGATION: Navigation = [
   },
 ];
 
-const demoTheme = createTheme({
+const Theme = createTheme({
   cssVariables: {
     colorSchemeSelector: 'data-toolpad-color-scheme',
   },
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: { dark: true , light: true,},
   breakpoints: {
     values: {
       xs: 0,
@@ -73,7 +73,7 @@ const demoTheme = createTheme({
   },
 });
 
-function DemoPageContent({ pathname }: { pathname: string }) {
+function PageContent({ pathname }: { pathname: string }) {
   return (
     <Box
       sx={{
@@ -89,7 +89,7 @@ function DemoPageContent({ pathname }: { pathname: string }) {
   );
 }
 
-interface DemoProps {
+interface Props {
   /**
    * Injected by the documentation to work in an iframe.
    * Remove this when copying and pasting into your project.
@@ -97,26 +97,24 @@ interface DemoProps {
   window?: () => Window;
 }
 
-export default function DashboardLayoutBasic(props: DemoProps) {
+export default function DashboardLayoutBasic(props: Props) {
   const { window } = props;
 
   const router = useDemoRouter('/dashboard');
-
-  // Remove this const when copying and pasting into your project.
-  const demoWindow = window !== undefined ? window() : undefined;
+  let Window = window !== undefined ? window() : undefined;
 
   return (
-    // preview-start
     <AppProvider
       navigation={NAVIGATION}
       router={router}
-      theme={demoTheme}
-      window={demoWindow}
+      theme={Theme}
+      window={Window}
     >
-      <DashboardLayout>
-        <DemoPageContent pathname={router.pathname} />
+      <DashboardLayout
+      title="myname"
+      >
+        <PageContent pathname={router.pathname} />
       </DashboardLayout>
     </AppProvider>
-    // preview-end
   );
 }

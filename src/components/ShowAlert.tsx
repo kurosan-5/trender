@@ -10,13 +10,13 @@ const ShowAlert = () => {
       {type === "welcome" ? (
 
         <Alert
-          icon={<WavingHandTwoToneIcon sx={{ color: "black" }} />}
+          icon={<WavingHandTwoToneIcon sx={{ color: "white" }} />}
           severity='success'
           onClose={clearAlert}
           sx={{
             fontSize: 14,
-            color: "black",
-            backgroundColor: "rgba(255, 214, 255,0.8)"
+            color: "white",
+            backgroundColor: "rgba(0, 0, 0, 0.82)"
           }}
           action=''
         >
