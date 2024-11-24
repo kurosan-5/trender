@@ -25,30 +25,15 @@ interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme }) => ({
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
+const ExpandMore = styled(({ expand, ...other }: ExpandMoreProps & React.HTMLAttributes<HTMLButtonElement>) => (
+  <IconButton {...other} />
+))(({ theme, expand }: { theme: any; expand: boolean }) => ({
+  marginLeft: "auto",
+  transition: theme.transitions.create("transform", {
     duration: theme.transitions.duration.shortest,
   }),
-  variants: [
-    {
-      props: ({ expand }) => !expand,
-      style: {
-        transform: 'rotate(0deg)',
-      },
-    },
-    {
-      props: ({ expand }) => !!expand,
-      style: {
-        transform: 'rotate(180deg)',
-      },
-    },
-  ],
+  transform: expand ? "rotate(180deg)" : "rotate(0deg)", // expand の値に応じてスタイルを切り替える
 }));
-
 
 
 export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessage}: {post:Post, toggle:(value:boolean)=>void, isOK:boolean, setIsOK:(value: boolean)=>void, setModalMessage:(value:string)=>void}) {
