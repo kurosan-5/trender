@@ -12,16 +12,14 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Post } from '../Indexs/ShowPostIndex';
 import { useEffect, useState } from 'react';
 import { db } from '../../../firebase';
 import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { User } from '@/globalType';
-import { Button, Divider, Menu, MenuItem } from '@mui/material';
+import { Divider, Menu, MenuItem } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { SettingsBackupRestoreOutlined } from '@mui/icons-material';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -172,7 +170,7 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          
+
         </CardContent>
       </Collapse>
     </Card>

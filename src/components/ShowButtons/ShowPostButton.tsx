@@ -1,5 +1,5 @@
 import { Fab, Grid2, Modal, TextField } from "@mui/material";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import PostButton from "../Buttons/PostButton";
 import AddIcon from '@mui/icons-material/Add';
 const ShowPostButton = () => {
