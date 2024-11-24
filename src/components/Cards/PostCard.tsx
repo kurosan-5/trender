@@ -15,7 +15,12 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Post } from '../Indexs/ShowPostIndex';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { db } from '../../../firebase';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { User } from '@/globalType';
+import { Button, Divider } from '@mui/material';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -45,15 +50,44 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   ],
 }));
 
-export default function RecipeReviewCard({post}: {post:Post}) {
+
+
+export default function PostViewCard({post}: {post:Post}) {
   const [expanded, setExpanded] = useState(false);
+  const [userData, setUserData] = useState<User|{name:""}>({name:""});
+
+  const fetchUserDate = async () => {
+    const docRef = await query(collection(db,'users'), where('id', '==', post.user_id));
+    const docSnap = await getDocs(docRef);
+
+    docSnap.forEach((doc) => {
+      const data = doc.data();
+      if(data){
+        setUserData(data as User);
+      }else{
+        userData.name = "存在しないユーザーです"
+      }
+    })
+  }
+
+  const handleDelete = async () => {
+    await deleteDoc(doc(db,'posts',post.id));
+  }
+
+  useEffect(()=>{
+    fetchUserDate()
+  },[])
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
+  const time = new Date(post.timestamp.seconds * 1000 + post.timestamp.nanoseconds / 1000000);
+  const formattedDate = getTimeDifference(time);
+
+
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ width: {xs:350, md:"60%"}, marginTop:1 }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -65,8 +99,9 @@ export default function RecipeReviewCard({post}: {post:Post}) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={}
-        subheader="September 14, 2016"
+        title={userData.name}
+        subheader={formattedDate}
+        sx={{ paddingBottom:1}}
       />
       {post?.image === undefined ? null : <CardMedia
         component="img"
@@ -74,28 +109,27 @@ export default function RecipeReviewCard({post}: {post:Post}) {
         image="/static/images/cards/paella.jpg"
         alt="Paella dish"
       />}
-      <CardContent>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
+      <Divider />
+      <CardContent sx={{paddingTop:1, paddingBottom:1}}>
+        <Typography variant="body1" sx={{ color: 'text.secondary'}}>
+          {post.content}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
         >
-          <ExpandMoreIcon />
+          <ChatBubbleOutlineIcon />
         </ExpandMore>
+        <IconButton aria-label="add to favorites">
+          <FavoriteIcon />
+        </IconButton>
+        <IconButton aria-label="share">
+          <ShareIcon />
+        </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
@@ -128,4 +162,25 @@ export default function RecipeReviewCard({post}: {post:Post}) {
       </Collapse>
     </Card>
   );
+}
+
+
+function getTimeDifference(date:Date) : string {
+  const now :Date = new Date();
+  const registeredDate: Date = date;
+  const diffMs = now.getTime() - registeredDate.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays > 7) {
+    // 一週間を超える場合はフォーマットされた日付を返す
+    return `${registeredDate.getMonth() + 1}/${registeredDate.getDate()}/${registeredDate.getFullYear()}`;
+  } else if (diffHours > 0) {
+    // 時間が1時間以上の場合
+    return `${diffHours}時間前`;
+  } else {
+    // それ以外の場合は分を返す
+    return `${diffMinutes}分前`;
+  }
 }

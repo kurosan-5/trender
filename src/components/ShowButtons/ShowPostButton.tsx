@@ -1,7 +1,7 @@
-import { Button, Grid2, Modal, TextField } from "@mui/material";
-import { useState } from "react";
+import { Fab, Grid2, Modal, TextField } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
 import PostButton from "../Buttons/PostButton";
-
+import AddIcon from '@mui/icons-material/Add';
 const ShowPostButton = () => {
     const [text, onChangeText] = useState('');
     const [open, toggleOpen] = useState(false);
@@ -12,8 +12,8 @@ const ShowPostButton = () => {
                 onClose={() => toggleOpen(false)}
             >
                 <Grid2
-                direction="column"
-                spacing={2}
+                    direction="column"
+                    spacing={2}
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -21,21 +21,21 @@ const ShowPostButton = () => {
                         transform: 'translate(-50%, -50%)',
                         width: 400,
                         bgcolor: 'background.paper',
-                        borderRadius:2,
+                        borderRadius: 2,
                         boxShadow: 24,
                         p: 4,
-                        textAlign:'right'
+                        textAlign: 'right'
                     }}
                 >
                     <Grid2>
                         <TextField
                             multiline
                             fullWidth
-                            focused
                             rows={4}
-                            label="ポストの内容"
+                            label="今日あったことをシェア"
                             onChange={(e) => onChangeText(e.target.value)}
-                            sx={{marginBottom:1}}
+                            sx={{ marginBottom: 2 }}
+
                         />
                     </Grid2>
                     <Grid2>
@@ -43,7 +43,15 @@ const ShowPostButton = () => {
                     </Grid2>
                 </Grid2>
             </Modal>
-            <Button variant="outlined" onClick={() => toggleOpen(true)} >ポストする</Button>
+            <Fab
+                onClick={() => toggleOpen(true)}
+                style={{
+                    position: 'fixed',
+                    bottom: '16px',
+                    right: '16px',
+                }}
+            >
+                <AddIcon sx={{ fontSize: 30 }} /></Fab>
 
         </>
     )
