@@ -20,6 +20,8 @@ import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/fire
 import { User } from '@/globalType';
 import { Divider, Menu, MenuItem } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { reducerUser } from '@/redux/auth/authType';
+import { useSelector } from 'react-redux';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -55,6 +57,7 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
   const [expanded, setExpanded] = useState(false);
   const [userData, setUserData] = useState<User|{name:""}>({name:""});
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const user = useSelector((state:reducerUser)=> state.auth.user)
   const open = Boolean(anchorEl);
 
   const fetchUserDate = async () => {
@@ -109,10 +112,14 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
             R
           </Avatar>
         }
+
         action={
-          <IconButton aria-label="settings" onClick={handleMore}>
-            <MoreVertIcon />
-          </IconButton>
+          user!.id != post.user_id ? null :(
+            <IconButton aria-label="settings" onClick={handleMore}>
+              <MoreVertIcon />
+            </IconButton>
+          )
+
         }
         title={userData.name}
         subheader={formattedDate}

@@ -121,8 +121,8 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="fixed">
-            <Container maxWidth="xl">
+        <AppBar position="fixed" sx={{padding:0}}>
+            <Container maxWidth="xl" sx={{maxWidth:1800}}>
                 <Toolbar disableGutters>
                     {!user ? null : <Box sx={{ flexGrow: 1, display: 'flex' }}>
                         <IconButton
@@ -136,7 +136,7 @@ function ResponsiveAppBar() {
                             <MenuIcon />
                         </IconButton>
                     </Box>}
-                    
+
                     <TrendingUpIcon sx={{ display: 'flex', mr: 2 }} />
                     <Typography
                         variant="h5"
@@ -156,7 +156,7 @@ function ResponsiveAppBar() {
                     >
                         TRENDER
                     </Typography>
-                    {!user ? null : 
+                    {!user ? null :
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

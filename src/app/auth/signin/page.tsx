@@ -17,7 +17,7 @@ const SignIn = () => {
     const [passwordText, onChangePasswordText] = useState('');
 
     const [error, setError] = useState<Error>({})
-    
+
 
     return (
         <Box
@@ -65,7 +65,7 @@ const SignIn = () => {
 
             <Button
                 variant="text"
-                onClick={() => router.push('/resetPassword')}
+                onClick={() => router.push('/auth/signin/resetPassword')}
                 sx={{ mb: 1 }}
             >
                 パスワードをリセットする
