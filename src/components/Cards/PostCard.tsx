@@ -18,10 +18,15 @@ import { useEffect, useState } from 'react';
 import { db } from '../../../firebase';
 import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { User } from '@/globalType';
-import { Divider, Menu, MenuItem } from '@mui/material';
+import { Button, Container, Divider, Menu, MenuItem, TextField, Grid2 } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { reducerUser } from '@/redux/auth/authType';
 import { useSelector } from 'react-redux';
+import SendIcon from '@mui/icons-material/Send';
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import Comment from '../Comment/Comment';
+import { green } from "@mui/material/colors";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -53,22 +58,24 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 
 
-export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessage}: {post:Post, toggle:(value:boolean)=>void, isOK:boolean, setIsOK:(value: boolean)=>void, setModalMessage:(value:string)=>void}) {
+export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMessage }: { post: Post, toggle: (value: boolean) => void, isOK: boolean, setIsOK: (value: boolean) => void, setModalMessage: (value: string) => void }) {
   const [expanded, setExpanded] = useState(false);
-  const [userData, setUserData] = useState<User|{name:""}>({name:""});
+  const [userData, setUserData] = useState<User | { name: "" }>({ name: "" });
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const user = useSelector((state:reducerUser)=> state.auth.user)
+  const user = useSelector((state: reducerUser) => state.auth.user)
   const open = Boolean(anchorEl);
+  const [isComment, setIsComment] = useState(false)
+  const [commentText, onchangeCommentText] = useState("")
 
   const fetchUserDate = async () => {
-    const docRef = await query(collection(db,'users'), where('id', '==', post.user_id));
+    const docRef = await query(collection(db, 'users'), where('id', '==', post.user_id));
     const docSnap = await getDocs(docRef);
 
     docSnap.forEach((doc) => {
       const data = doc.data();
-      if(data){
+      if (data) {
         setUserData(data as User);
-      }else{
+      } else {
         userData.name = "存在しないユーザーです"
       }
     })
@@ -80,13 +87,13 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
     setIsOK(false)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchUserDate()
-  },[])
+  }, [])
 
-  useEffect(()=>{
-    if(isOK){
-      deleteDoc(doc(db,'posts',post.id));
+  useEffect(() => {
+    if (isOK) {
+      deleteDoc(doc(db, 'posts', post.id));
     }
   }, [isOK])
 
@@ -105,7 +112,7 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
   const formattedDate = getTimeDifference(time);
 
   return (
-    <Card sx={{ width: {xs:350, md:"60%"}, marginTop:1 }}>
+    <Card sx={{ width: { xs: 350, md: "60%" }, marginTop: 1 }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -114,7 +121,7 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
         }
 
         action={
-          user!.id != post.user_id ? null :(
+          user!.id != post.user_id ? null : (
             <IconButton aria-label="settings" onClick={handleMore}>
               <MoreVertIcon />
             </IconButton>
@@ -123,7 +130,7 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
         }
         title={userData.name}
         subheader={formattedDate}
-        sx={{ paddingBottom:1}}
+        sx={{ paddingBottom: 1 }}
       />
       <Menu
         anchorEl={anchorEl}
@@ -139,13 +146,13 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
         }}
       >
         <MenuItem
-         onClick={() => {
-          setAnchorEl(null);
-          handleDelete();
-        }}
+          onClick={() => {
+            setAnchorEl(null);
+            handleDelete();
+          }}
         >
           このポストを削除する
-          </MenuItem>
+        </MenuItem>
       </Menu>
       {post?.image === undefined ? null : <CardMedia
         component="img"
@@ -154,8 +161,8 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
         alt="Paella dish"
       />}
       <Divider />
-      <CardContent sx={{paddingTop:1, paddingBottom:1}}>
-        <Typography variant="body1" sx={{ color: 'text.secondary'}}>
+      <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
+        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
           {post.content}
         </Typography>
       </CardContent>
@@ -176,8 +183,53 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-        <Typography>aaaaaa</Typography>
+        <Divider variant="middle" textAlign='left' sx={{ fontSize: 16 }}>Comments</Divider>
+        <CardContent sx={{ paddingTop: 1 }}>
+          <Comment />
+          {isComment ? (
+            <Grid2>
+              <Grid2
+                direction="row"
+                container
+                spacing={2}
+              >
+                <Grid2>
+                  <Avatar sx={{ bgcolor: green[500], fontsize: 20, width: 37, height: 37, marginTop: 1 }} aria-label="recipe">
+                    S
+                  </Avatar>
+                </Grid2>
+                <Grid2>
+                  <Typography sx={{ color: "text.secondary" }}>user name</Typography>
+                  <Typography sx={{ color: "text.secondary" }}>date</Typography>
+                </Grid2>
+                <Grid2 sx={{ marginLeft: "auto" }}>
+                  <IconButton onClick={() => setIsComment(false)} sx={{ marginTop: 1 }}>
+                    <HighlightOffIcon sx={{ fontSize: 30 }} />
+                  </IconButton>
+                </Grid2>
+              </Grid2>
+              <TextField
+                multiline
+                rows={4}
+                label="コメントをしよう"
+                value={commentText}
+                fullWidth
+                onChange={(e) => onchangeCommentText(e.target.value)}
+                sx={{
+                  marginTop: 2
+                }}
+              />
+              <div style={{ textAlign: "right" }}>
+                <IconButton sx={{ marginRight: .5 }}>
+                  <SendIcon sx={{ fontSize: 32, color: "rgb(11, 120, 255)" }} />
+                </IconButton>
+              </div>
+            </Grid2>
+          ) : (
+            <div style={{ textAlign: "right", padding: 0 }}>
+              <Button onClick={() => setIsComment(true)} variant="outlined">コメントする</Button>
+            </div>
+          )}
         </CardContent>
       </Collapse>
     </Card>
@@ -185,8 +237,8 @@ export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessa
 }
 
 
-function getTimeDifference(date:Date) : string {
-  const now :Date = new Date();
+function getTimeDifference(date: Date): string {
+  const now: Date = new Date();
   const registeredDate: Date = date;
   const diffMs = now.getTime() - registeredDate.getTime();
   const diffMinutes = Math.floor(diffMs / (1000 * 60));

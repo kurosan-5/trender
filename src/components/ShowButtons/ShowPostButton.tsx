@@ -1,7 +1,8 @@
-import { Fab, Grid2, Modal, TextField } from "@mui/material";
+import { Fab, Grid2, IconButton, Modal, TextField } from "@mui/material";
 import { useState } from "react";
 import PostButton from "../Buttons/PostButton";
 import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 const ShowPostButton = () => {
     const [text, onChangeText] = useState('');
     const [open, toggleOpen] = useState(false);
@@ -14,6 +15,7 @@ const ShowPostButton = () => {
                 <Grid2
                     direction="column"
                     spacing={2}
+                    columnSpacing={2}
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -24,10 +26,15 @@ const ShowPostButton = () => {
                         borderRadius: 2,
                         boxShadow: 24,
                         p: 4,
-                        textAlign: 'right'
+                        textAlign: 'right',
+                        paddingTop:1,
+                        paddingRight:0
                     }}
                 >
-                    <Grid2>
+                    <IconButton onClick={() => toggleOpen(false)}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Grid2 sx={{marginRight:4}}>
                         <TextField
                             multiline
                             fullWidth
@@ -38,12 +45,13 @@ const ShowPostButton = () => {
 
                         />
                     </Grid2>
-                    <Grid2>
+                    <Grid2 sx={{marginRight:4}}>
                         <PostButton content={text} state={toggleOpen} />
                     </Grid2>
                 </Grid2>
             </Modal>
             <Fab
+            color="secondary"
                 onClick={() => toggleOpen(true)}
                 style={{
                     position: 'fixed',
@@ -51,7 +59,7 @@ const ShowPostButton = () => {
                     right: '16px',
                 }}
             >
-                <AddIcon sx={{ fontSize: 30 }} /></Fab>
+                <AddIcon sx={{ fontSize: 30 }}/></Fab>
 
         </>
     )
