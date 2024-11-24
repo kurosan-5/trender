@@ -32,7 +32,7 @@ const ShowPostButton = () => {
                             multiline
                             fullWidth
                             rows={4}
-                            label="今日あったことをシェア"
+                            label="今日の思い出をシェア"
                             onChange={(e) => onChangeText(e.target.value)}
                             sx={{ marginBottom: 2 }}
 

@@ -19,8 +19,9 @@ import { useEffect, useState } from 'react';
 import { db } from '../../../firebase';
 import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { User } from '@/globalType';
-import { Button, Divider } from '@mui/material';
+import { Button, Divider, Menu, MenuItem } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { SettingsBackupRestoreOutlined } from '@mui/icons-material';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -52,9 +53,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 
 
-export default function PostViewCard({post}: {post:Post}) {
+export default function PostViewCard({post, toggle, isOK, setIsOK, setModalMessage}: {post:Post, toggle:(value:boolean)=>void, isOK:boolean, setIsOK:(value: boolean)=>void, setModalMessage:(value:string)=>void}) {
   const [expanded, setExpanded] = useState(false);
   const [userData, setUserData] = useState<User|{name:""}>({name:""});
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = Boolean(anchorEl);
 
   const fetchUserDate = async () => {
     const docRef = await query(collection(db,'users'), where('id', '==', post.user_id));
@@ -71,20 +74,34 @@ export default function PostViewCard({post}: {post:Post}) {
   }
 
   const handleDelete = async () => {
-    await deleteDoc(doc(db,'posts',post.id));
+    toggle(true);
+    setModalMessage('ポスト')
+    setIsOK(false)
   }
 
   useEffect(()=>{
     fetchUserDate()
   },[])
 
+  useEffect(()=>{
+    if(isOK){
+      deleteDoc(doc(db,'posts',post.id));
+    }
+  }, [isOK])
+
+
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
+  const handleMore = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+
   const time = new Date(post.timestamp.seconds * 1000 + post.timestamp.nanoseconds / 1000000);
   const formattedDate = getTimeDifference(time);
-
 
   return (
     <Card sx={{ width: {xs:350, md:"60%"}, marginTop:1 }}>
@@ -95,7 +112,7 @@ export default function PostViewCard({post}: {post:Post}) {
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
+          <IconButton aria-label="settings" onClick={handleMore}>
             <MoreVertIcon />
           </IconButton>
         }
@@ -103,6 +120,28 @@ export default function PostViewCard({post}: {post:Post}) {
         subheader={formattedDate}
         sx={{ paddingBottom:1}}
       />
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <MenuItem
+         onClick={() => {
+          setAnchorEl(null);
+          handleDelete();
+        }}
+        >
+          このポストを削除する
+          </MenuItem>
+      </Menu>
       {post?.image === undefined ? null : <CardMedia
         component="img"
         height="194"
@@ -133,31 +172,7 @@ export default function PostViewCard({post}: {post:Post}) {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography sx={{ marginBottom: 2 }}>Method:</Typography>
-          <Typography sx={{ marginBottom: 2 }}>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-            aside for 10 minutes.
-          </Typography>
-          <Typography sx={{ marginBottom: 2 }}>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-            medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-            occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-            large plate and set aside, leaving chicken and chorizo in the pan. Add
-            pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-            stirring often until thickened and fragrant, about 10 minutes. Add
-            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography sx={{ marginBottom: 2 }}>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is absorbed,
-            15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
-            mussels, tucking them down into the rice, and cook again without
-            stirring, until mussels have opened and rice is just tender, 5 to 7
-            minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then serve.
-          </Typography>
+          
         </CardContent>
       </Collapse>
     </Card>
