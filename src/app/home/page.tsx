@@ -7,6 +7,7 @@ import ShowPostIndex from "@/components/Indexs/ShowPostIndex";
 import { addDoc, getDocs, query, where } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 import { Container } from "@mui/material";
+import Map from "./map";
 
 export default function Home() {
   const { setUser, resetUser } = useAuthActions()
@@ -49,6 +50,7 @@ export default function Home() {
     <Container sx={{display:"flex", flexDirection:"column", alignItems:"center"}}>
       <ShowPostIndex />
       <ShowPostButton />
+      <Map />
     </Container>
     </>
   )

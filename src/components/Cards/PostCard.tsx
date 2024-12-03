@@ -16,24 +16,23 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Post } from '../Indexs/ShowPostIndex';
 import { useEffect, useState } from 'react';
 import { db } from '../../../firebase';
-import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query, Timestamp, where } from 'firebase/firestore';
 import { User } from '@/globalType';
-import { Button, Container, Divider, Menu, MenuItem, TextField, Grid2 } from '@mui/material';
+import { Button,  Divider, Menu, MenuItem, TextField, Grid2 } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { reducerUser } from '@/redux/auth/authType';
 import { useSelector } from 'react-redux';
-import SendIcon from '@mui/icons-material/Send';
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import Comment from '../Comment/Comment';
 import { green } from "@mui/material/colors";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-
+import ReplyIcon from '@mui/icons-material/Reply';
+import CommentButton from '../Buttons/CommentButton';
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { ...other } = props;
+  const { expand, ...other } = props;
   return <IconButton {...other} />;
 })(({ theme }) => ({
   marginLeft: 'auto',
@@ -108,8 +107,7 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
   };
 
 
-  const time = new Date(post.timestamp.seconds * 1000 + post.timestamp.nanoseconds / 1000000);
-  const formattedDate = getTimeDifference(time);
+  const formattedDate = getTimeDifference(post.timestamp);
 
   return (
     <Card sx={{ width: { xs: 350, md: "60%" }, marginTop: 1 }}>
@@ -183,9 +181,8 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <Divider variant="middle" textAlign='left' sx={{ fontSize: 16 }}>Comments</Divider>
         <CardContent sx={{ paddingTop: 1 }}>
-          <Comment />
+          <Comment post={post} toggle={toggle} isOK={isOK} setIsOK={setIsOK} setModalMessage={setModalMessage}/>
           {isComment ? (
             <Grid2>
               <Grid2
@@ -220,9 +217,7 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
                 }}
               />
               <div style={{ textAlign: "right" }}>
-                <IconButton sx={{ marginRight: .5 }}>
-                  <SendIcon sx={{ fontSize: 32, color: "rgb(11, 120, 255)" }} />
-                </IconButton>
+                <CommentButton post={post} content={commentText} close={setIsComment} clear={onchangeCommentText}/>
               </div>
             </Grid2>
           ) : (
@@ -237,9 +232,10 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
 }
 
 
-function getTimeDifference(date: Date): string {
+export function getTimeDifference(date: Timestamp): string {
+  const time = new Date(date.seconds * 1000 + date.nanoseconds / 1000000);
   const now: Date = new Date();
-  const registeredDate: Date = date;
+  const registeredDate: Date = time;
   const diffMs = now.getTime() - registeredDate.getTime();
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
   const diffHours = Math.floor(diffMinutes / 60);
