@@ -37,7 +37,6 @@ const Map: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locChange, setLocChange] = useState(false);
   const [posts, setPosts] = useState<Post[]>([])
-  const map = useMap();
 
 
   useEffect(() => {
@@ -86,6 +85,7 @@ const Map: React.FC = () => {
   // 中心を動的に変更するコンポーネント
   const ChangeView: React.FC<{ center: [number, number] }> = ({ center }) => {
     if (userLocation && !locChange) {
+      const map = useMap();
       map.flyTo(center, map.getZoom())
       setLocChange(true);
       return null;
@@ -137,6 +137,7 @@ const Map: React.FC = () => {
   );
 };
 
+
 const StyledPopup = styled(Popup)`
   .leaflet-popup-content{
     margin:0;
@@ -168,7 +169,7 @@ function Pin({ post, refe }: { post: Post, refe: RefObject<L.Marker | null>}) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    let random = Math.floor(Math.random() * 4)+2;
+    const random = Math.floor(Math.random() * 4)+2;
 
     const interval = setInterval(() => {
       if (refe.current) {
