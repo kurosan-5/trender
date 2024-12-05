@@ -60,7 +60,7 @@ export default function Pop({ post }: { post: Post }) {
                         <span style={{ fontSize: 10 }}>{formattedDate + " "}</span>{post.content}
                     </Typography>
                 </div>
-                {user!.id != post.user_id ? null : (
+                {user?.id != post.user_id ? null : (
                     <IconButton aria-label="settings" onClick={handleMore} sx={{ width: 24, height: 24, marginTop: '4px' }}>
                         <MoreVertIcon fontSize="small" />
                     </IconButton>

@@ -84,8 +84,8 @@ const Map: React.FC = () => {
 
   // 中心を動的に変更するコンポーネント
   const ChangeView: React.FC<{ center: [number, number] }> = ({ center }) => {
+    const map = useMap();
     if (userLocation && !locChange) {
-      const map = useMap();
       map.flyTo(center, map.getZoom())
       setLocChange(true);
       return null;
