@@ -16,17 +16,12 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Post } from '../Indexs/ShowPostIndex';
 import { useEffect, useState } from 'react';
 import { db } from '../../../firebase';
-import { collection, deleteDoc, doc, getDocs, query, Timestamp, where } from 'firebase/firestore';
+import { collection, getDocs, query, Timestamp, where } from 'firebase/firestore';
 import { User } from '@/globalType';
-import { Button,  Divider, Menu, MenuItem, TextField, Grid2 } from '@mui/material';
+import { Divider, Menu, MenuItem } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { reducerUser } from '@/redux/auth/authType';
 import { useSelector } from 'react-redux';
-import Comment from '../Comment/Comment';
-import { green } from "@mui/material/colors";
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import ReplyIcon from '@mui/icons-material/Reply';
-import CommentButton from '../Buttons/CommentButton';
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
@@ -55,16 +50,12 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   ],
 }));
 
-
-
-export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMessage }: { post: Post, toggle: (value: boolean) => void, isOK: boolean, setIsOK: (value: boolean) => void, setModalMessage: (value: string) => void }) {
+export default function PostViewCard({ post }: { post: Post }) {
   const [expanded, setExpanded] = useState(false);
   const [userData, setUserData] = useState<User | { name: "" }>({ name: "" });
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const user = useSelector((state: reducerUser) => state.auth.user)
   const open = Boolean(anchorEl);
-  const [isComment, setIsComment] = useState(false)
-  const [commentText, onchangeCommentText] = useState("")
 
   const fetchUserDate = async () => {
     const docRef = await query(collection(db, 'users'), where('id', '==', post.user_id));
@@ -80,21 +71,10 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
     })
   }
 
-  const handleDelete = async () => {
-    toggle(true);
-    setModalMessage('ポスト')
-    setIsOK(false)
-  }
 
   useEffect(() => {
     fetchUserDate()
   }, [])
-
-  useEffect(() => {
-    if (isOK) {
-      deleteDoc(doc(db, 'posts', post.id));
-    }
-  }, [isOK])
 
 
 
@@ -110,25 +90,29 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
   const formattedDate = getTimeDifference(post.timestamp);
 
   return (
-    <Card sx={{ width: { xs: 350, md: "60%" }, marginTop: 1 }}>
+    <Card sx={{ width: "100%", marginTop: 1,boxShadow: "none" }} elevation={0}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+          <Avatar sx={{ bgcolor: red[500], width: 25, height: 25 }} aria-label="recipe">
             R
           </Avatar>
         }
 
         action={
           user!.id != post.user_id ? null : (
-            <IconButton aria-label="settings" onClick={handleMore}>
-              <MoreVertIcon />
+            <IconButton aria-label="settings" onClick={handleMore} sx={{ width: 24, height: 24 }}>
+              <MoreVertIcon fontSize="small" />
             </IconButton>
           )
 
         }
-        title={userData.name}
-        subheader={formattedDate}
-        sx={{ paddingBottom: 1 }}
+        title={<Typography variant="subtitle2">
+        {userData.name}
+      </Typography>}
+        subheader={ <Typography variant="caption">
+        {formattedDate}
+      </Typography>}
+        sx={{ padding: 0, fontSize:12 }}
       />
       <Menu
         anchorEl={anchorEl}
@@ -146,7 +130,6 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            handleDelete();
           }}
         >
           このポストを削除する
@@ -158,73 +141,25 @@ export default function PostViewCard({ post, toggle, isOK, setIsOK, setModalMess
         image="/static/images/cards/paella.jpg"
         alt="Paella dish"
       />}
-      <Divider />
-      <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+      <CardContent sx={{ padding: 0, marginTop: 1, marginBottom:1 }}>
+        <Typography variant="subtitle2">
           {post.content}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ChatBubbleOutlineIcon />
-        </ExpandMore>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton aria-label="add to favorites" sx={{ width: 20, height: 20 }}>
+        <ChatBubbleOutlineIcon fontSize="small" />
         </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
+        <IconButton aria-label="add to favorites" sx={{ width: 20, height: 20 }}>
+          <FavoriteIcon fontSize="small" />
+        </IconButton>
+        <IconButton aria-label="share" sx={{ width: 20, height: 20 }}>
+          <ShareIcon fontSize="small" />
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ paddingTop: 1 }}>
-          <Comment post={post} toggle={toggle} isOK={isOK} setIsOK={setIsOK} setModalMessage={setModalMessage}/>
-          {isComment ? (
-            <Grid2>
-              <Grid2
-                direction="row"
-                container
-                spacing={2}
-              >
-                <Grid2>
-                  <Avatar sx={{ bgcolor: green[500], fontsize: 20, width: 37, height: 37, marginTop: 1 }} aria-label="recipe">
-                    S
-                  </Avatar>
-                </Grid2>
-                <Grid2>
-                  <Typography sx={{ color: "text.secondary" }}>user name</Typography>
-                  <Typography sx={{ color: "text.secondary" }}>date</Typography>
-                </Grid2>
-                <Grid2 sx={{ marginLeft: "auto" }}>
-                  <IconButton onClick={() => setIsComment(false)} sx={{ marginTop: 1 }}>
-                    <HighlightOffIcon sx={{ fontSize: 30 }} />
-                  </IconButton>
-                </Grid2>
-              </Grid2>
-              <TextField
-                multiline
-                rows={4}
-                label="コメントをしよう"
-                value={commentText}
-                fullWidth
-                onChange={(e) => onchangeCommentText(e.target.value)}
-                sx={{
-                  marginTop: 2
-                }}
-              />
-              <div style={{ textAlign: "right" }}>
-                <CommentButton post={post} content={commentText} close={setIsComment} clear={onchangeCommentText}/>
-              </div>
-            </Grid2>
-          ) : (
-            <div style={{ textAlign: "right", padding: 0 }}>
-              <Button onClick={() => setIsComment(true)} variant="outlined">コメントする</Button>
-            </div>
-          )}
+
         </CardContent>
       </Collapse>
     </Card>

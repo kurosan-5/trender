@@ -4,7 +4,21 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Popup } from 're
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Avatar, Box, Button, Typography } from '@mui/material';
-import CustomPopper from '@/components/CustomPopper';
+import CreatePinComponent from './CreatePinComponent';
+import { getDocs, collection, onSnapshot, Timestamp, query, where } from 'firebase/firestore';
+import { db } from '../../../firebase';
+import { User } from '@/globalType';
+import PostViewCard, { getTimeDifference } from '../Cards/PostCard';
+
+export interface Post {
+  id: string,
+  user_id: string,
+  content: string,
+  lat: number,
+  lng: number,
+  timestamp: Timestamp,
+  image?: string,
+}
 
 // マーカーアイコンのカスタム設定
 const customIcon = new L.Icon({
@@ -20,9 +34,41 @@ const Map: React.FC = () => {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locChange, setLocChange] = useState(false);
-  const [positions, setPositions] = useState([[35.68170116720479, 139.79518890380862], [35.71961857038755, 139.81973648071292]])
+  const [posts, setPosts] = useState<Post[]>([])
+
+
 
   useEffect(() => {
+
+    const fetchPostData = async () => {
+      const querySnapshot = await getDocs(collection(db, 'posts'));
+      setPosts(querySnapshot.docs.map((post) => {
+        const data = post.data()
+        return {
+          id: post.id,
+          user_id: data.user_id,
+          content: data.content,
+          lat: data.lat,
+          lng: data.lng,
+          timestamp: data.timestamp
+        }
+      }))
+    }
+
+    fetchPostData();
+    onSnapshot(collection(db, 'posts'), (snapshot) => {
+      setPosts(snapshot.docs.map((post) => {
+        const data = post.data()
+        return {
+          id: post.id,
+          user_id: data.user_id,
+          content: data.content,
+          lat: data.lat,
+          lng: data.lng,
+          timestamp: data.timestamp
+        }
+      }))
+    })
     // 現在地を取得
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -33,7 +79,7 @@ const Map: React.FC = () => {
         console.error('現在地の取得に失敗しました', error);
       }
     );
-  }, []);
+  }, [])
 
   // 中心を動的に変更するコンポーネント
   const ChangeView: React.FC<{ center: [number, number] }> = ({ center }) => {
@@ -41,13 +87,12 @@ const Map: React.FC = () => {
       const map = useMap();
       map.flyTo(center, map.getZoom())
       setLocChange(true);
-
       return null;
     }
   };
 
 
-  //ピンを刺す    
+  //ピンを刺す
   const MapClickHandler = () => {
     useMapEvents({
       click(e) {
@@ -70,10 +115,11 @@ const Map: React.FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapClickHandler />
-        {positions && positions.map((position) => (
-          <Pin key={position} position={position} />
-        ))
-        }
+        {posts && posts.map((post) => (
+          <Pin key={post.id} post={post} />
+        ))}
+
+        {position && <CreatePinComponent position={position} icon={customIcon} />}
 
         <ChangeView center={userLocation || [35.681236, 139.767125]} />
       </MapContainer>
@@ -86,23 +132,15 @@ const Map: React.FC = () => {
   );
 };
 
-function Pin({ position }: any) {
+
+function Pin({ post }: any) {
   return (
     <Marker
-      position={position}
+      position={[post.lat, post.lng]}
       icon={customIcon}
     >
       <Popup>
-        <Box display="flex" alignItems="center" gap={1}>
-          <Avatar alt="Ann" sx={{ width: 32, height: 32 }} />
-          <Typography variant="body2" fontWeight="bold">
-            Ann 2024/12/03
-          </Typography>
-        </Box>
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          I really love this place because the scenery here is absolutely beautiful. The views are
-          stunning, and I feel a deep connection to the surroundings.
-        </Typography>
+        <PostViewCard post={post}/>
       </Popup>
     </Marker>
   )
