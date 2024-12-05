@@ -2,8 +2,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../../../firebase";
 import { useAuthActions } from "@/redux/auth/useActions";
-import ShowPostButton from "@/components/ShowButtons/ShowPostButton";
-import ShowPostIndex from "@/components/Indexs/ShowPostIndex";
 import { addDoc, getDocs, query, where } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 import { Container } from "@mui/material";

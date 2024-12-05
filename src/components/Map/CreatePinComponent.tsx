@@ -1,25 +1,23 @@
-import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
-import { useRef, useState } from "react";
-import { Marker, Popup, useMap } from "react-leaflet";
+import { Avatar, TextField } from "@mui/material";
+import { useState } from "react";
+import { Marker, Popup } from "react-leaflet";
 import PostButton from "../Buttons/PostButton";
-import { useSelector } from "react-redux";
-import { reducerUser } from "@/redux/auth/authType";
-import { red } from "@mui/material/colors";
 import styled from "@emotion/styled";
-
-const CreatePinComponent = ({ position, icon, state }: { position: any, icon: any, state: (value: [number, number] | null) => void }) => {
+import { Position } from "./map";
+import L from 'leaflet';
+import { red } from "@mui/material/colors";
+const CreatePinComponent = ({ position, icon, state }: { position: Position, icon: L.Icon, state: (value: [number, number] | null) => void }) => {
 
     const [postText, onchangePostText] = useState("");
 
-    const [open, setOpen] = useState(true);
-    const date = new Date();
-    const now = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
-    const user = useSelector((state: reducerUser) => state.auth.user)
+    // const date = new Date();
+    // const now = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+    // const user = useSelector((state: reducerUser) => state.auth.user)
 
     return (
         <>
             <Marker position={position} icon={icon}>
-                {open && <StyledPopup
+                <StyledPopup
                     autoClose={false}
                     closeOnClick={false}
                 >
@@ -55,7 +53,7 @@ const CreatePinComponent = ({ position, icon, state }: { position: any, icon: an
                             <PostButton content={postText} position={position} state={state} />
                         </div>
                     </div>
-                </StyledPopup>}
+                </StyledPopup>
             </Marker>
         </>
 
@@ -64,9 +62,9 @@ const CreatePinComponent = ({ position, icon, state }: { position: any, icon: an
 
 const StyledPopup = styled(Popup)`
   .leaflet-popup-content{
-    margin:0; 
+    margin:0;
     display:flex;
-    
+
     padding-left:10px;
     padding-right:18px;
 
@@ -74,7 +72,7 @@ const StyledPopup = styled(Popup)`
 
 
   .leaflet-popup-content-wrapper {
-    padding: 0; 
+    padding: 0;
     margin: 0;
     height: 40px;
     display:flex;

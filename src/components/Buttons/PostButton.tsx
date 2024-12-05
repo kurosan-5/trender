@@ -4,10 +4,10 @@ import { addDoc, collection } from "firebase/firestore";
 import { useAlert } from "@/context/AlertContext";
 import { useSelector } from "react-redux";
 import { reducerUser } from "@/redux/auth/authType";
-
+import { Position } from "../Map/map";
 
 // const PostButton = ({content,state}:{content:string,state:(value:boolean)=>void}) => {
-const PostButton = ({content, position, state}:{content:string, position:any, state:(value:[number, number]|null)=>void}) => {
+const PostButton = ({content, position, state}:{content:string, position:Position, state:(value:[number, number]|null)=>void}) => {
     const {showAlert} = useAlert()
     const user = useSelector((state :reducerUser) => state.auth.user);
 

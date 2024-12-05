@@ -1,26 +1,17 @@
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Post } from '../Indexs/ShowPostIndex';
 import { useEffect, useState } from 'react';
 import { db } from '../../../firebase';
 import { collection, deleteDoc, getDocs, query, Timestamp, where, doc } from 'firebase/firestore';
 import { User } from '@/globalType';
 import { Menu, MenuItem } from '@mui/material';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { reducerUser } from '@/redux/auth/authType';
 import { useSelector } from 'react-redux';
+import { Post } from './map';
 
 export default function Pop({ post }: { post: Post }) {
     const [userData, setUserData] = useState<User | { name: "" }>({ name: "" });

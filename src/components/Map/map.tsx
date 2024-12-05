@@ -1,17 +1,16 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, RefObject, LegacyRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Avatar, Button, Grid2, Typography, Container, IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 import CreatePinComponent from './CreatePinComponent';
 import { getDocs, collection, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { red } from '@mui/material/colors';
 import styled from '@emotion/styled';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Pop from './Pop';
 
+export type Position = [number,number];
 
 export interface Post {
   id: string,
@@ -38,7 +37,7 @@ const Map: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locChange, setLocChange] = useState(false);
   const [posts, setPosts] = useState<Post[]>([])
-
+  const map = useMap();
 
 
   useEffect(() => {
@@ -87,7 +86,6 @@ const Map: React.FC = () => {
   // 中心を動的に変更するコンポーネント
   const ChangeView: React.FC<{ center: [number, number] }> = ({ center }) => {
     if (userLocation && !locChange) {
-      const map = useMap();
       map.flyTo(center, map.getZoom())
       setLocChange(true);
       return null;
@@ -106,7 +104,7 @@ const Map: React.FC = () => {
   };
 
   const mapRef = useRef(null)
-  const markerRef = useRef(null)
+  const markerRef = useRef<L.Marker | null>(null)
 
 
   return (
@@ -141,9 +139,9 @@ const Map: React.FC = () => {
 
 const StyledPopup = styled(Popup)`
   .leaflet-popup-content{
-    margin:0; 
+    margin:0;
     display:flex;
-    
+
     padding-left:10px;
     padding-right:18px;
 
@@ -151,7 +149,7 @@ const StyledPopup = styled(Popup)`
 
 
   .leaflet-popup-content-wrapper {
-    padding: 4px 0; 
+    padding: 4px 0;
     margin: 0;
     height: auto;
     display:flex;
@@ -164,19 +162,19 @@ const StyledPopup = styled(Popup)`
 `;
 
 
-function Pin({ post, refe }: { post: Post, refe: any }) {
+function Pin({ post, refe }: { post: Post, refe: RefObject<L.Marker | null>}) {
 
 
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    var random = Math.floor(Math.random() * 4)+2;
+    let random = Math.floor(Math.random() * 4)+2;
 
     const interval = setInterval(() => {
       if (refe.current) {
         if (!isOpen) {
           setTimeout(() => {
-            refe.current.openPopup()
+            refe.current!.openPopup()
             setIsOpen(true);
           }, 10000)
         } else {
@@ -194,7 +192,7 @@ function Pin({ post, refe }: { post: Post, refe: any }) {
     <Marker
       position={[post.lat, post.lng]}
       icon={customIcon}
-      ref={refe}
+      ref={refe as LegacyRef<L.Marker>}
     >
       <StyledPopup
         autoClose={false}
