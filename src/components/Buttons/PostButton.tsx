@@ -7,7 +7,7 @@ import { reducerUser } from "@/redux/auth/authType";
 
 
 // const PostButton = ({content,state}:{content:string,state:(value:boolean)=>void}) => {
-const PostButton = ({content, position}:{content:string, position:any}) => {
+const PostButton = ({content, position, state}:{content:string, position:any, state:(value:[number, number]|null)=>void}) => {
     const {showAlert} = useAlert()
     const user = useSelector((state :reducerUser) => state.auth.user);
 
@@ -22,8 +22,8 @@ const PostButton = ({content, position}:{content:string, position:any}) => {
                 lng:position[1],
                 timestamp: new Date,
             })
-            showAlert('ポストしました', 'success')
-
+            showAlert('ポストしました', 'success');
+            state(null);
         }catch(error){
             if(error instanceof Error){
                 showAlert(error.message, 'error')
