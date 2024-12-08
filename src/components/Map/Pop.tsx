@@ -13,6 +13,9 @@ import { reducerUser } from '@/redux/auth/authType';
 import { useSelector } from 'react-redux';
 import { Post } from './map';
 
+
+
+
 export default function Pop({ post }: { post: Post }) {
     const [userData, setUserData] = useState<User | { name: "" }>({ name: "" });
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

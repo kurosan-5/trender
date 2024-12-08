@@ -1,13 +1,15 @@
 "use client";
+import React from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../../../firebase";
 import { useAuthActions } from "@/redux/auth/useActions";
 import { addDoc, getDocs, query, where } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 import { Container } from "@mui/material";
-import Map from "../../components/Map/map";
+import dynamic from "next/dynamic";
 
-export default function Home() {
+const Home = () => {
+  const Map = dynamic(()=> import('@/components/Map/map'), {ssr:false});
   const { setUser, resetUser } = useAuthActions()
   onAuthStateChanged(auth, async (user) => {
     let isExist = false;
@@ -27,6 +29,7 @@ export default function Home() {
         if (data) {
           isExist = true;
         }
+
       })
       if (!isExist) {
         //authのuserデータをfirestoreにも移行
@@ -51,3 +54,5 @@ export default function Home() {
     </>
   )
 }
+
+export default Home;
