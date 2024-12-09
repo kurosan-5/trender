@@ -7,7 +7,7 @@ import { reducerUser } from "@/redux/auth/authType";
 import { Position } from "../Map/map";
 
 // const PostButton = ({content,state}:{content:string,state:(value:boolean)=>void}) => {
-const PostButton = ({content, position, state}:{content:string, position:Position, state:(value:[number, number]|null)=>void}) => {
+const PostButton = ({content, position}:{content:string, position:Position}) => {
     const {showAlert} = useAlert()
     const user = useSelector((state :reducerUser) => state.auth.user);
 
@@ -18,12 +18,11 @@ const PostButton = ({content, position, state}:{content:string, position:Positio
             await addDoc(collection(db, 'posts'),{
                 user_id:user.id,
                 content:content,
-                lat:position[0],
-                lng:position[1],
+                lat:position.lat,
+                lng:position.lng,
                 timestamp: new Date,
             })
             showAlert('ポストしました', 'success');
-            state(null);
         }catch(error){
             if(error instanceof Error){
                 showAlert(error.message, 'error')

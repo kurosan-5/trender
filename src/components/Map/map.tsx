@@ -1,11 +1,19 @@
 "use client";
-import useLeafletMap  from "@/hook/useLeafLetMap";
-import { Timestamp } from "firebase/firestore";
+import useLeafletMap from "@/hook/useLeafLetMap";
+import { collection, getDocs, onSnapshot, Timestamp } from "firebase/firestore";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { db } from "../../../firebase";
+import styled from "@emotion/styled";  
+import { createRoot } from "react-dom/client";
+import CreatePinComponent from "./CreatePinComponent";
+import { AlertProvider } from "@/context/AlertContext";
+import StoreProvider from "@/redux/StoreProvider";
+import ReactDOM from 'react-dom/client';
 
-export type Position = [number,number];
+
+export type Position = { lat: number, lng: number };
 
 export interface Post {
   id: string,
@@ -27,54 +35,150 @@ const customIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-const Map = ({ posts, userLocation, setPosition, customIcon }: any) => {
-  const { mapRef, leafletMapRef } = useLeafletMap(userLocation || [35.681236, 139.767125]);
+//カスタムポップアップ
+const StyledPopup = styled.div`
+  .leaflet-popup-content {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+  }
 
-  // マップクリックハンドラー
+  .leaflet-popup-content-wrapper {
+    background-color: yellow;
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .leaflet-popup-tip {
+    background-color: yellow;
+  }
+`;
+
+const Pop = ({ post }: any) => (
+  <div>
+    <h4>{post.title}</h4>
+    <p>{post.description}</p>
+  </div>
+);
+
+
+
+const Map = () => {
+
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [locChange, setLocChange] = useState(false);
+  const [posts, setPosts] = useState<Post[]>([]);
+  let marker: L.Marker | null = null;
+  const [post, setPost] = useState({ title: "ピンのタイトル", description: "ここに詳細情報を記載します。" }); // ポップアップのデータ
+  let root : ReactDOM.Root |null = null;
+
+
+
+
   useEffect(() => {
-    const map = leafletMapRef.current;
-    if (map) {
-      map.on("click", (event: L.LeafletMouseEvent) => {
-        const newMarker = L.marker(event.latlng, {
-          icon: customIcon,
-        }).addTo(map);
 
-        setPosition(event.latlng);
-      });
+    const fetchPostData = async () => {
+      const querySnapshot = await getDocs(collection(db, 'posts'));
+      setPosts(querySnapshot.docs.map((post) => {
+        const data = post.data()
+        return {
+          id: post.id,
+          user_id: data.user_id,
+          content: data.content,
+          lat: data.lat,
+          lng: data.lng,
+          timestamp: data.timestamp
+        }
+      }))
     }
 
+    fetchPostData();
+    onSnapshot(collection(db, 'posts'), (snapshot) => {
+      setPosts(snapshot.docs.map((post) => {
+        const data = post.data()
+        return {
+          id: post.id,
+          user_id: data.user_id,
+          content: data.content,
+          lat: data.lat,
+          lng: data.lng,
+          timestamp: data.timestamp
+        }
+      }))
+    })
+    // 現在地を取得
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation([latitude, longitude]);
+      },
+      (error) => {
+        console.error('現在地の取得に失敗しました', error);
+      }
+    );
+
+    // 地図の初期化
+    var map = L.map('map').setView([35.6895, 139.6917], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // クリックイベントを追加
+    map.on("click", (e) => {
+      const { lat, lng } = e.latlng;
+
+      if (marker && root) {
+        map.removeLayer(marker);
+        if (root) {
+          root.unmount();
+          root = null;  // rootをnullにリセット
+        }
+      }
+
+
+
+      // 新しいマーカーを追加
+      marker = L.marker([lat, lng], { icon: customIcon })
+        .addTo(map)
+        .bindPopup(
+          '<div id="popup-container"></div>'
+          , { autoClose: false }
+        )
+        .openPopup();
+
+        const container = document.getElementById("popup-container");
+        if (container) {
+          if (root) {
+            root.unmount();
+          }
+          root = createRoot(container);
+          root.render(
+            <StoreProvider>
+              <AlertProvider>
+                <CreatePinComponent position={e.latlng} icon={customIcon} map={map} />
+              </AlertProvider>
+            </StoreProvider>
+
+          );
+        }
+    });
+
+    // クリーンアップ処理
     return () => {
-      if (map) {
-        map.off("click");
+      map.remove(); // 地図を削除
+
+      if (root) {
+        root.unmount();
+        root = null;
       }
     };
-  }, [customIcon]);
+  }, [])
 
-  // ピンの描画
-  useEffect(() => {
-    const map = leafletMapRef.current;
-    if (map && posts) {
-      const markers = posts.map((post: any) => {
-        const marker = L.marker([post.latitude, post.longitude]).addTo(map);
-        marker.bindPopup(`<b>${post.title}</b><br>${post.description}`);
-        return marker;
-      });
-
-      return () => {
-        markers.forEach((marker:any) => marker.remove());
-      };
-    }
-  }, [posts]);
-
-  // ビュー変更
-  useEffect(() => {
-    const map = leafletMapRef.current;
-    if (map && userLocation) {
-      map.setView(userLocation, 13);
-    }
-  }, [userLocation]);
-
-  return <div ref={mapRef} className="w-full h-[85vh]" />;
+  return <div id="map" className="w-full h-[85vh]" />;
 };
 
 
