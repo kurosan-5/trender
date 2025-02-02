@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { Button } from '@mui/material';
 import CreatePinComponent from './CreatePinComponent';
 import { getDocs, collection, onSnapshot, Timestamp } from 'firebase/firestore';
@@ -39,7 +38,7 @@ const Map: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([])
 
   useEffect(() => {
-    
+
     const fetchPostData = async () => {
       const querySnapshot = await getDocs(collection(db, 'posts'));
       setPosts(querySnapshot.docs.map((post) => {
@@ -138,9 +137,9 @@ const Map: React.FC = () => {
 
 const StyledPopup = styled(Popup)`
   .leaflet-popup-content{
-    margin:0; 
+    margin:0;
     display:flex;
-    
+
     padding-left:10px;
     padding-right:18px;
 
@@ -148,7 +147,7 @@ const StyledPopup = styled(Popup)`
 
 
   .leaflet-popup-content-wrapper {
-    padding: 4px 0; 
+    padding: 4px 0;
     margin: 0;
     height: auto;
     display:flex;
@@ -156,7 +155,7 @@ const StyledPopup = styled(Popup)`
   }
 
   .leaflet-popup-content-wrapper, .leaflet-popup-tip{
-    
+
   }
 `;
 
@@ -166,7 +165,7 @@ function Pin({ post, refe }: { post: Post, refe: any }) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  let user = useSelector((state:reducerUser) => state.auth.user); 
+  let user = useSelector((state:reducerUser) => state.auth.user);
 
   useEffect(() => {
     var random = Math.floor(Math.random() * 4)+2;
